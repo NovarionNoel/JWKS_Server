@@ -59,10 +59,11 @@ func generateRSAKeyPair() *KeyPair {
 
 // jwks endpoint
 func jwksHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 	keys := []map[string]interface{}{}
-
-	keys = append(keys, generateJWKFromKeyPair(expiredKeyPair))
-	log.Println("Serving expired key with Kid:", expiredKeyPair.Kid) // Logging the kid for debugging
 
 	for _, kp := range keyPairs {
 		keys = append(keys, generateJWKFromKeyPair(kp))
